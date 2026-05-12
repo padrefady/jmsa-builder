@@ -353,9 +353,8 @@ export const useCMSStore = create<CMSStore>((set, get) => ({
       dashboardStats: null,
       notifications: [],
     });
-    // Notify the main page to switch back to landing
-    window.dispatchEvent(new CustomEvent('cms-logout'));
-    get().addNotification('You have been logged out.', 'info');
+    // Redirect to landing page
+    window.location.href = '/connect';
   },
 
   checkSession: async () => {

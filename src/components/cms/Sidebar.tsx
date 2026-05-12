@@ -1,5 +1,7 @@
 'use client';
 
+import { usePathname } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { useCMSStore, type ViewName } from '@/store/cms-store';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -17,6 +19,7 @@ import {
 
 interface NavItem {
   view: ViewName;
+  path: string;
   label: string;
   icon: React.ReactNode;
   disabled?: boolean;
@@ -25,9 +28,10 @@ interface NavItem {
 
 function getNavItems(isPending: boolean): NavItem[] {
   const items: NavItem[] = [
-    { view: 'dashboard', label: 'Tableau de bord', icon: <LayoutDashboard className="w-5 h-5" /> },
+    { view: 'dashboard', path: '/dashboard', label: 'Tableau de bord', icon: <LayoutDashboard className="w-5 h-5" /> },
     {
       view: 'sites',
+      path: '/dashboard/sites',
       label: 'Sites web',
       icon: <Globe className="w-5 h-5" />,
       disabled: isPending,
@@ -35,18 +39,21 @@ function getNavItems(isPending: boolean): NavItem[] {
     },
     {
       view: 'statistics',
+      path: '/dashboard/statistics',
       label: 'Statistiques',
       icon: <BarChart3 className="w-5 h-5" />,
       disabled: isPending,
       disabledTooltip: 'Disponible apres activation de votre compte',
     },
-    { view: 'settings', label: 'Parametres', icon: <Settings className="w-5 h-5" /> },
+    { view: 'settings', path: '/dashboard/settings', label: 'Parametres', icon: <Settings className="w-5 h-5" /> },
   ];
   return items;
 }
 
 export default function Sidebar() {
-  const { user, currentView, setView, sidebarOpen, toggleSidebar, isPendingUser } = useCMSStore();
+  const { user, sidebarOpen, toggleSidebar, isPendingUser } = useCMSStore();
+  const pathname = usePathname();
+  const router = useRouter();
 
   const initials = user?.name
     ? user.name
@@ -117,14 +124,14 @@ export default function Sidebar() {
         <ScrollArea className="flex-1 py-4 px-3">
           <nav className="space-y-1">
             {navItems.map((item) => {
-              const isActive = currentView === item.view;
+              const isActive = pathname === item.path;
               const isDisabled = item.disabled;
               return (
                 <button
-                  key={item.view}
+                  key={item.path}
                   onClick={() => {
                     if (isDisabled) return;
-                    setView(item.view);
+                    router.push(item.path);
                     if (window.innerWidth < 1024) toggleSidebar();
                   }}
                   disabled={isDisabled}

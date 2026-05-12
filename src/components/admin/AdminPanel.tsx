@@ -1214,7 +1214,7 @@ function CommentsTab({ token }: { token: string }) {
 export default function AdminPanel({
   onClose,
 }: {
-  onClose: () => void;
+  onClose?: () => void;
 }) {
   const [token, setToken] = useState<string | null>(null);
   const [checkingAuth, setCheckingAuth] = useState(true);
@@ -1277,7 +1277,11 @@ export default function AdminPanel({
     setToken(null);
     setUsers([]);
     setComments([]);
-    onClose();
+    if (onClose) {
+      onClose();
+    } else {
+      window.location.href = '/';
+    }
   };
 
   // Calculate stats
