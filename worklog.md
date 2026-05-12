@@ -1,28 +1,32 @@
 # JMSA Builder - Worklog
 
 ---
-Task ID: 1
-Agent: Main
-Task: Resume pending tasks from previous session
+Task ID: 2
+Agent: Super Z (Main Agent)
+Task: Restauration du projet JMSA Builder + correction bug médiathèque
 
 Work Log:
-- Verified DashboardView already has "24 à 72 heures" text in Analyse step (line 37)
-- Verified 80 blog articles exist across 4 categories (20 each)
-- Generated 3 unique AI images for landing page (hero, features, customization)
-- Integrated AdminPanel into page.tsx as dynamic import with admin access
-- Enhanced Navbar branding (emerald gradient icon + "Votre partenaire digital en Afrique")
-- Added admin access link in Footer
-- Created loading.tsx for route-level loading states
-- Added preload hints for critical assets in layout.tsx
-- Optimized hero image to eager loading (above the fold)
-- Enhanced Preloader with smooth animated progress bar
-- Created optimized zip (4.1MB) excluding node_modules, .next, skills
-- Uploaded to tmpfiles.org
+- Nettoyage Git (rm -rf .git/rebase-merge .git/rebase-apply)
+- Configuration du remote GitHub et push initial
+- Tentative de restauration depuis le premier zip (tmpfiles.org) - ne contenait que les skills
+- Téléchargement du second zip depuis /upload/jmsa-builder-project (3).zip (11.2 MB)
+- Extraction et copie complète du projet dans /home/z/my-project
+- Installation des dépendances (bun install - 827 packages)
+- Push du schéma Prisma (db push --accept-data-loss)
+- Identification de 2 bugs dans la médiathèque:
+
+Bug 1 - fetchMedia: L'API retourne { media: [...] } avec des objets contenant authorId/author, mais le store attendait uploadedBy directement sur l'objet.
+Fix: Ajout d'un mapping explicite m.author?.name ?? m.authorId ?? undefined vers uploadedBy
+
+Bug 2 - uploadMedia: L'API retourne { message, media: {...} } mais le store faisait await res.json() directement comme un MediaItem.
+Fix: Extraction de resData.media puis mapping vers le type MediaItem
+
+- Nettoyage eslint (ignore *.js pour keepalive.js, server-wrapper.js)
+- Commit + push force sur GitHub
+- Déploiement Vercel automatique via GitHub integration
 
 Stage Summary:
-- All 7 pending tasks completed
-- Dev server compiles cleanly with 0 new errors
-- Admin panel accessible via Footer "Administration" link
-- Landing page now has 3 unique generated images
-- Performance: preload hints, eager loading, progress bar preloader
-- Zip download: http://tmpfiles.org/35927831/jmsa-builder-clean.zip
+- Projet JMSA Builder entièrement restauré depuis le zip utilisateur
+- 2 bugs critiques de la médiathèque corrigés dans src/store/cms-store.ts
+- Déployé sur https://jmsa-builder.vercel.app (READY)
+- Repo: https://github.com/padrefady/jmsa-builder
