@@ -7,39 +7,118 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Admin {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  password  String
+model User {
+  id        String     @id @default(cuid())
   name      String
+  email     String     @unique
+  password  String
+  role      String     @default("admin")
+  avatar    String?
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  // Business info
+  businessName       String?
+  businessType       String?
+  businessDescription String?
+  businessAddress    String?
+  businessCity       String?
+  businessCountry    String?
+  phone              String?
+
+  // Social media
+  whatsapp    String?
+  facebook    String?
+  instagram   String?
+  tiktok      String?
+  twitter     String?
+  linkedin    String?
+
+  // Project / CRM
+  status          String     @default("pending")
+  plan            String     @default("free")
+  planStartDate   DateTime?
+  domain          String?
+  betaUrl         String?
+  notes           String?
+
+  pages CmsPage[]
+  posts CmsPost[]
+  media CmsMedia[]
+}
+
+model CmsPage {
+  id        String   @id @default(cuid())
+  title     String
+  slug      String   @unique
+  content   String   @default("")
+  status    String   @default("draft")
+  seoTitle  String?
+  seoDesc   String?
+  authorId  String
+  author    User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
-model Client {
-  id          String   @id @default(cuid())
-  name        String
-  email       String?
-  phone       String?
-  company     String?
-  address     String?
-  notes       String?
-  status      String   @default("actif")
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  media       Media[]
+model CmsPost {
+  id            String        @id @default(cuid())
+  title         String
+  slug          String        @unique
+  excerpt       String?
+  content       String        @default("")
+  featuredImage String?
+  status        String        @default("draft")
+  publishedAt   DateTime?
+  authorId      String
+  author        User          @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  categoryId    String?
+  category      CmsCategory?  @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
 }
 
-model Media {
-  id          String   @id @default(cuid())
-  filename    String
-  originalName String
-  mimeType    String
-  size        Int
-  path        String
-  clientId    String
-  client      Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
-  category    String   @default("document")
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+model CmsCategory {
+  id          String     @id @default(cuid())
+  name        String
+  slug        String     @unique
+  description String?
+  color       String     @default("#10b981")
+  posts       CmsPost[]
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+}
+
+model CmsMedia {
+  id        String   @id @default(cuid())
+  filename  String
+  filepath  String
+  url       String
+  mimeType  String
+  size      Int
+  alt       String?
+  authorId  String
+  author    User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+}
+
+model CmsSetting {
+  id    String @id @default(cuid())
+  key   String @unique
+  value String
+}
+
+model BlogComment {
+  id        String   @id @default(cuid())
+  articleId String
+  articleSlug String
+  author    String
+  email     String?
+  content   String
+  website   String?
+  ipAddress String?
+  userAgent String?
+  isApproved Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

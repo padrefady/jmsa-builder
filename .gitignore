@@ -51,6 +51,4 @@ prompt
 
 server.log
 # Skills directory
-/skills/db/
-public/uploads/
-jmsa-builder-main.zip
+/skills/
